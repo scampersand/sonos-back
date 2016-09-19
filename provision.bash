@@ -6,6 +6,7 @@
 # fine, otherwise set VAGRANT_PROJ
 : ${VAGRANT_TOP:=/vagrant}
 : ${VAGRANT_PROJ:=*}
+: ${VAGRANT_PYTHON:=python3.4}
 
 main() {
     if [[ $EUID != 0 ]]; then
@@ -70,13 +71,18 @@ lxc_postinstall() {
 install_packages() {
     declare -a packages
     packages+=( locales ) # for locale-gen
+    packages+=( python-software-properties ) # for add-apt-repository
     packages+=( curl rsync )
-    packages+=( git )
+    packages+=( $VAGRANT_PYTHON )
+    packages+=( ${VAGRANT_PYTHON%%[2.]*}-dev ) # python-dev or python3-dev
+    packages+=( virtualenv python-pip )
+#   packages+=( ruby-dev bundler )
+#   packages+=( git )
     packages+=( sudo ssh )
     packages+=( make gcc g++ binutils )
-    packages+=( inotify-tools ) # inotifywait
-    packages+=( nodejs )  # add npm if not installing from nodesource
-    packages+=( graphicsmagick )  # for image resizing
+#   packages+=( inotify-tools ) # inotifywait
+#   packages+=( nodejs )  # add npm if not installing from nodesource
+#   packages+=( graphicsmagick )  # for image resizing
 
     # Don't install extra stuff.
     # Suggests list is long; recommends list is short and sensible.
@@ -147,7 +153,7 @@ user_virtualenv() {
     # Always create the virtualenv, even if there's no requirements.txt, since
     # we also use it to isolate ruby gems.
     if [[ ! -d env ]]; then
-        virtualenv env
+        virtualenv env -p $VAGRANT_PYTHON
     fi
     source env/bin/activate
 
