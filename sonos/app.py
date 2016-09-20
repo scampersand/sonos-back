@@ -1,8 +1,10 @@
 from flask import Flask, request
+from flask_cors import CORS
 from flask_restful import Resource, Api
 import soco
 
 app = Flask(__name__)
+CORS(app)  # TODO only allow from same subnet(s) as backend
 api = Api(app)
 
 sonos = soco.SoCo("172.20.1.233")
@@ -33,13 +35,3 @@ class TransportState(Resource):
         return {'current_transport_state': data['current_transport_state']}
 
 api.add_resource(TransportState, '/transport_state')
-
-
-
-@app.after_request
-def after_request(response):
-  response.headers.add('Access-Control-Allow-Origin', '*')
-  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
-  return response
-
