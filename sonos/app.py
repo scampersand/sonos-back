@@ -22,6 +22,8 @@ class TransportState(Resource):
 
     def put(self):
         data = request.get_json()
+        if not data:  # preflight request
+            return ''
         if data['current_transport_state'] == 'PLAYING':
             sonos.play()
         elif data['current_transport_state'] == 'PAUSED_PLAYBACK':
@@ -31,3 +33,13 @@ class TransportState(Resource):
         return {'current_transport_state': data['current_transport_state']}
 
 api.add_resource(TransportState, '/transport_state')
+
+
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  return response
+
