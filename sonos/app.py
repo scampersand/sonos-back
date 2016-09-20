@@ -19,7 +19,11 @@ class CurrentTrack(Resource):
         if not data:  # preflight request
             return ''
         if data['command'] == 'BACK':
-            sonos.previous()
+            position = sonos.get_current_track_info()['position']
+            if position < "0:00:03":
+                sonos.previous()
+            else:
+                sonos.seek("0:00:00")
         elif data['command'] == 'NEXT':
             sonos.next()
         return self.get()
