@@ -1,4 +1,4 @@
 Flask==0.11.1
 Flask-Cors==3.0.2
 Flask-RESTful==0.3.5
--e git+git@github.com:scampersand/sonos-back.git@c1442a2c63db50432cd06cd20007de6ec6ca2144#egg=soco
+-e git+https://github.com/scampersand/SoCo.git@e9ac236bd3f1d7d7adbb9d7f23a9c933c8b0e4dc#egg=soco
