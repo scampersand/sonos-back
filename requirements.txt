@@ -2,3 +2,6 @@ Flask==0.11.1
 Flask-Cors==3.0.2
 Flask-RESTful==0.3.5
 -e git+https://github.com/scampersand/SoCo.git@e9ac236bd3f1d7d7adbb9d7f23a9c933c8b0e4dc#egg=soco
+
+# enable werkzeug reloader using inotify instead of polling mtimes
+watchdog
