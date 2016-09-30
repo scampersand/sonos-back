@@ -1,11 +1,29 @@
 from flask_restful import Resource
 from .sonos import sonos
+from . import cache
 
 
+class CachedResource(Resource):
+    max_age = 5
 
-class CurrentTrack(Resource):
     def get(self):
-        return sonos.get_current_track_info()
+        value = cache.get(self.cache_key, max_age=self.max_age)
+        if value is None:
+            value = self._refresh()
+            cache.set(self.cache_key, value)
+        return value
+
+    def _refresh(self):
+        raise NotImplementedError
+
+    @property
+    def cache_key(self):
+        return self.__class__.__name__
+
+
+
+class CurrentTrack(CachedResource):
+    _refresh = sonos.get_current_track_info
 
     def post(self):
         data = request.get_json()
@@ -22,9 +40,8 @@ class CurrentTrack(Resource):
         return self.get()
 
 
-class TransportInfo(Resource):
-    def get(self):
-        return sonos.get_current_transport_info()
+class TransportInfo(CachedResource):
+    _refresh = sonos.get_current_transport_info
 
     def post(self):
         data = request.get_json()
