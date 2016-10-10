@@ -56,6 +56,75 @@ class TransportInfo(CachedResource):
         return self.get()
 
 
+class BrowserResource(Resource):
+    envelope_fields = ['title']
+    title = 'TITLE'
+
+    def make_envelope(self):
+        return {
+            name: getattr(self, name)
+            for name in self.envelope_fields
+        }
+
+    def paged_response(self, items, start, count, total):
+        env = self.make_envelope()
+        return dict(
+            env,
+            start=start,
+            count=count,
+            total=total,
+            items=items,
+        )
+
+    def one_page_response(self, items):
+        return self.paged_response(
+            start=0,
+            count=len(items),
+            total=len(items),
+            items=items,
+        )
+
+
+class Browse(BrowserResource):
+    title = 'Browse'
+
+    def get(self):
+        return self.one_page_response([
+            {'path': '/browse/library/', 'title': 'Library'},
+        ])
+
+
+class BrowseLibrary(BrowserResource):
+    title = 'Library'
+
+    def get(self):
+        return self.one_page_response([
+            {'path': '/browse/library/artists/', 'title': 'Artists'},
+        ])
+
+
+class BrowseLibraryArtists(BrowserResource):
+    title = 'Artists'
+
+    def get(self):
+        items = sonos.music_library.get_artists()
+        return self.paged_response(
+            start=0,
+            count=items.number_returned,
+            total=items.total_matches,
+            items=[
+                {
+                    'path': '/browse/library/albums/?id={}'.format(item.item_id),
+                    'title': item.title,
+                }
+                for item in items
+            ],
+        )
+
+
 def add_sonos_resources(api):
     api.add_resource(CurrentTrack, '/current_track')
     api.add_resource(TransportInfo, '/transport_info')
+    api.add_resource(Browse, '/browse/')
+    api.add_resource(BrowseLibrary, '/browse/library/')
+    api.add_resource(BrowseLibraryArtists, '/browse/library/artists/')
