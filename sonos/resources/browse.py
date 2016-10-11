@@ -5,14 +5,14 @@ class BrowserResource(Resource):
     envelope_fields = ['title']
     title = 'TITLE'
 
-    def __init__(self, *args, **kwargs):
-        super(BrowserResource, self).__init__(*args, **kwargs)
-        self.parser = parser = reqparse.RequestParser()
+    def get_parser(self):
+        parser = reqparse.RequestParser()
         parser.add_argument('limit', type=inputs.positive, default=100)
         parser.add_argument('start', type=inputs.natural, default=0)
+        return parser
 
     def parse_args(self):
-        return self.parser.parse_args(strict=True)
+        return self.get_parser().parse_args(strict=True)
 
     def make_envelope(self):
         return {

@@ -9,10 +9,11 @@ api = Api(app)
 
 from .resources.play import CurrentTrack, TransportInfo
 from .resources.browse import Browse
-from .resources.library import BrowseLibrary, BrowseLibraryArtists
+from .resources.library import BrowseLibrary, BrowseLibraryArtists, BrowseLibraryAlbums
 api.add_resource(CurrentTrack, '/current_track')
 api.add_resource(TransportInfo, '/transport_info')
 api.add_resource(Browse, '/browse/')
 api.add_resource(BrowseLibrary, '/browse/library/')
 api.add_resource(BrowseLibraryArtists, '/browse/library/artists/')
+api.add_resource(BrowseLibraryAlbums, '/browse/library/albums/')
 
