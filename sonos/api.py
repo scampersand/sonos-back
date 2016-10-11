@@ -1,4 +1,4 @@
-from flask_restful import Resource
+from flask_restful import Resource, reqparse, inputs
 from .sonos import sonos
 from . import cache
 
@@ -60,6 +60,15 @@ class BrowserResource(Resource):
     envelope_fields = ['title']
     title = 'TITLE'
 
+    def __init__(self, *args, **kwargs):
+        super(BrowserResource, self).__init__(*args, **kwargs)
+        self.parser = parser = reqparse.RequestParser()
+        parser.add_argument('limit', type=inputs.positive, default=100)
+        parser.add_argument('start', type=inputs.natural, default=0)
+
+    def parse_args(self):
+        return self.parser.parse_args(strict=True)
+
     def make_envelope(self):
         return {
             name: getattr(self, name)
@@ -107,9 +116,13 @@ class BrowseLibraryArtists(BrowserResource):
     title = 'Artists'
 
     def get(self):
-        items = sonos.music_library.get_artists()
+        args = self.parse_args()
+        items = sonos.music_library.get_artists(
+            start=args.start,
+            max_items=args.limit,
+        )
         return self.paged_response(
-            start=0,
+            start=args.start,  # have to trust it
             count=items.number_returned,
             total=items.total_matches,
             items=[
