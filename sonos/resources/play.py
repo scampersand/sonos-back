@@ -28,8 +28,6 @@ class CurrentTrack(CachedResource):
 
     def post(self):
         data = request.get_json()
-        if not data:  # preflight request
-            return ''
         if data['command'] == 'BACK':
             position = sonos.get_current_track_info()['position']
             if position < "0:00:03":
@@ -46,8 +44,6 @@ class TransportInfo(CachedResource):
 
     def post(self):
         data = request.get_json()
-        if not data:  # preflight request
-            return ''
         if data['command'] == 'PLAY':
             sonos.play()
         elif data['command'] == 'PAUSE':
