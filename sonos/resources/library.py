@@ -4,10 +4,10 @@ from .browse import BrowserResource
 
 
 class BrowseLibrary(BrowserResource):
-    title = 'Library'
+    title = 'Music Library'
 
     def get(self):
-        return self.one_page_response([
+        return self.simple_paged_response([
             {'path': '/browse/library/artists/', 'title': 'Artists'},
         ])
 

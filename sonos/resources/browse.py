@@ -21,20 +21,23 @@ class BrowserResource(Resource):
         }
 
     def paged_response(self, items, start, count, total):
-        env = self.make_envelope()
         return dict(
-            env,
+            self.make_envelope(),
             start=start,
             count=count,
             total=total,
             items=items,
         )
 
-    def one_page_response(self, items):
+    def simple_paged_response(self, items):
+        args = self.parse_args()
+        total = len(items)
+        if args.start or args.limit < len(items):
+            items = items[args.start:args.start+args.limit]
         return self.paged_response(
-            start=0,
+            start=args.start,
             count=len(items),
-            total=len(items),
+            total=total,
             items=items,
         )
 
@@ -43,6 +46,6 @@ class Browse(BrowserResource):
     title = 'Browse'
 
     def get(self):
-        return self.one_page_response([
-            {'path': '/browse/library/', 'title': 'Library'},
+        return self.simple_paged_response([
+            {'path': '/browse/library/', 'title': 'Music Library'},
         ])
