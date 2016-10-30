@@ -1,6 +1,6 @@
-# Load .env.bash -- backticks actually run /bin/sh so run bash inside.
-if File.exist?('.env.bash')
-    ENV.replace(eval `bash -ac "source .env.bash >/dev/null; ruby -e 'p ENV'"`)
+# Load env.bash -- backticks actually run /bin/sh so run bash inside.
+if File.exist?('env.bash')
+    ENV.replace(eval `bash -ac "source env.bash >/dev/null; ruby -e 'p ENV'"`)
 end
 
 Vagrant.configure("2") do |config|
