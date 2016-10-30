@@ -14,7 +14,7 @@ case " $*" in
         true
         ;;
     *)
-        ip=$(ip a | grep -o '172[.0-9]*' | head -n1)
+        ip=$(ip a | grep -o '172\.20\.[.0-9]*' | head -n1)
         set -- "$@" --host ${ip:-0}
         ;;
 esac
